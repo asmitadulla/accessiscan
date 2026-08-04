@@ -8,17 +8,18 @@ AccessiScan is a Python and JavaScript platform that evaluates web accessibility
 
 ## Project status
 
-In active development. Core pipeline architecture is in progress!
+**MVP complete.** The REST API, data pipeline, and persona engine are fully wired end-to-end: submit a scan, get back real WCAG 2.2 / Section 508 findings and persona-weighted gap scores. Report generation (PDF) and the dashboard visualization are still on the roadmap.
 
 ---
 
-## Features (planned)
+## Features
 
-- Synthetic user persona engine — simulates cognitive, motor, and visual accessibility profiles
-- REST API layer to ingest UI test results and persona input data
-- Compliance report generation mapped to WCAG 2.2, Section 508, and EN 301 549
-- Dashboard visualization of UX gaps across demographic and cognitive user groups
-- Structured data schema for scalable accessibility trend analysis
+- [x] REST API layer to ingest UI test results and persona input data
+- [x] Synthetic user persona engine — 5 profiles spanning visual, motor, and cognitive accessibility needs
+- [x] Compliance report generation mapped to WCAG 2.2 and Section 508
+- [ ] EN 301 549 mapping
+- [ ] Dashboard visualization of UX gaps across demographic and cognitive user groups
+- [ ] Persistent report storage (currently in-memory, resets on server restart)
 
 ---
 
@@ -66,8 +67,8 @@ source venv/bin/activate
 # Install dependencies
 pip install -r requirements.txt
 
-# Run the API server
-python src/api/app.py
+# Run the API server (must be run as a module from the repo root)
+python -m src.api.app
 ```
 
 ---
