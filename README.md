@@ -8,7 +8,7 @@ AccessiScan is a Python and JavaScript platform that evaluates web accessibility
 
 ## Project status
 
-🚧 In active development. Core pipeline architecture is in progress.
+In active development. Core pipeline architecture is in progress!
 
 ---
 
