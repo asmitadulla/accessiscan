@@ -11,7 +11,7 @@ PERSONAS = {
     },
     "screen_reader": {
         "description": "Blind user navigating entirely via screen reader (NVDA/JAWS/VoiceOver)",
-        "wcag_criteria_weight": ["1.1.1", "1.3.1", "2.1.1", "4.1.2"],
+        "wcag_criteria_weight": ["1.1.1", "1.3.1", "2.1.1", "3.1.1", "4.1.2"],
         "severity_multiplier": 2.0,
     },
     "motor_impairment": {
@@ -21,7 +21,7 @@ PERSONAS = {
     },
     "cognitive": {
         "description": "User with cognitive or learning differences needing simplified interfaces",
-        "wcag_criteria_weight": ["1.3.5", "2.4.6", "3.1.5", "3.3.2"],
+        "wcag_criteria_weight": ["1.3.5", "2.4.2", "2.4.6", "3.1.5", "3.3.2"],
         "severity_multiplier": 1.3,
     },
     "color_blind": {

@@ -48,10 +48,48 @@ class TestPipeline:
                 {"rule": "image-alt", "severity": "critical", "selector": "img.hero"},
             ]},
         )
-        assert result.wcag_violations == [
-            {"rule": "image-alt", "criterion": "1.1.1", "severity": "critical", "selector": "img.hero"}
-        ]
+        [v] = result.wcag_violations
+        assert v["rule"] == "image-alt"
+        assert v["criterion"] == "1.1.1"
+        assert v["severity"] == "critical"
+        assert v["selector"] == "img.hero"
         assert result.gap_scores["image-alt"] > 0
+
+    def test_violations_include_affected_personas_and_remediation(self):
+        result = run_pipeline("https://example.com", "low_vision", {"issues": [
+            {"rule": "color-contrast", "severity": "serious"},
+        ]})
+        [v] = result.wcag_violations
+        # 1.4.3 is a key criterion for both the low-vision and color-blind personas
+        assert set(v["affected_personas"]) == {"low_vision", "color_blind"}
+        assert "4.5:1" in v["remediation"]
+        assert result.section_508_violations[0]["remediation"] == v["remediation"]
+
+    def test_violations_ranked_most_severe_first(self):
+        result = run_pipeline("https://example.com", "screen_reader", {"issues": [
+            {"rule": "heading-order", "severity": "minor"},
+            {"rule": "keyboard-trap", "severity": "critical"},
+            {"rule": "label", "severity": "moderate"},
+        ]})
+        severities = [v["severity"] for v in result.wcag_violations]
+        assert severities == ["critical", "moderate", "minor"]
+
+    def test_summary_counts_by_severity(self):
+        result = run_pipeline("https://example.com", "cognitive", {"issues": [
+            {"rule": "image-alt", "severity": "critical"},
+            {"rule": "link-name", "severity": "critical"},
+            {"rule": "target-size", "severity": "minor"},
+            {"rule": "not-a-real-rule", "severity": "serious"},
+        ]})
+        assert result.summary["total"] == 3
+        assert result.summary["by_severity"]["critical"] == 2
+        assert result.summary["by_severity"]["minor"] == 1
+        assert result.summary["highest_severity"] == "critical"
+
+    def test_summary_empty_scan(self):
+        result = run_pipeline("https://example.com", "cognitive", {"issues": []})
+        assert result.summary["total"] == 0
+        assert result.summary["highest_severity"] is None
 
 
 class TestAPI:
@@ -88,6 +126,18 @@ class TestAPI:
             "test_results": {"issues": []},
         })
         assert resp.status_code == 400
+
+    def test_personas_endpoint_lists_all_five(self, client):
+        resp = client.get("/api/v1/personas")
+        assert resp.status_code == 200
+        ids = [p["id"] for p in resp.get_json()]
+        assert len(ids) == 5
+        assert "motor_impairment" in ids
+
+    def test_index_serves_web_ui(self, client):
+        resp = client.get("/")
+        assert resp.status_code == 200
+        assert b"AccessiScan" in resp.data
 
     def test_report_unknown_id_404s(self, client):
         resp = client.get("/api/v1/report/does-not-exist")

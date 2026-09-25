@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AccessiScan</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header">
+    <h1>AccessiScan</h1>
+    <p class="tagline">See how accessibility issues affect real users, ranked by severity.</p>
+  </header>
+
+  <main id="main">
+    <section aria-labelledby="scan-heading" class="panel">
+      <h2 id="scan-heading">New scan</h2>
+      <form id="scan-form" novalidate>
+        <div class="field">
+          <label for="url">Page URL</label>
+          <input id="url" name="url" type="url" required placeholder="https://www.wikipedia.org" autocomplete="url" aria-describedby="url-hint" />
+          <p id="url-hint" class="hint">
+            AccessiScan fetches the page and checks its HTML for missing alt text, form labels, link and
+            button names, heading order, page language, and title.
+          </p>
+        </div>
+
+        <div class="field">
+          <label for="persona">Persona</label>
+          <select id="persona" name="persona" required aria-describedby="persona-desc"></select>
+          <p id="persona-desc" class="hint"></p>
+        </div>
+
+        <details class="advanced" id="advanced">
+          <summary>Advanced: paste axe-core or Lighthouse results instead</summary>
+          <div class="field">
+            <label for="issues">Test results (JSON)</label>
+            <p id="issues-hint" class="hint">
+              Use this for checks that need a real browser, like color contrast and keyboard traps.
+              Provide an <code>issues</code> array; each issue needs a <code>rule</code>, and
+              <code>severity</code> and <code>selector</code> are optional. Leave empty to scan the URL.
+            </p>
+            <textarea id="issues" name="issues" rows="10" spellcheck="false" aria-describedby="issues-hint"></textarea>
+          </div>
+          <button type="button" id="sample-btn" class="secondary">Load sample issues</button>
+        </details>
+
+        <p id="form-error" class="error" role="alert" hidden></p>
+
+        <div class="actions">
+          <button type="submit" id="submit-btn">Run scan</button>
+        </div>
+      </form>
+    </section>
+
+    <section aria-labelledby="results-heading" class="panel" id="results" hidden>
+      <h2 id="results-heading" tabindex="-1">Results</h2>
+      <p id="results-status" aria-live="polite"></p>
+
+      <ul class="summary" id="summary" aria-label="Violations by severity"></ul>
+
+      <div class="table-wrap">
+        <table>
+          <caption class="visually-hidden">WCAG 2.2 violations, most severe first</caption>
+          <thead>
+            <tr>
+              <th scope="col">Severity</th>
+              <th scope="col">Issue</th>
+              <th scope="col">WCAG</th>
+              <th scope="col">Affected users</th>
+              <th scope="col">How to fix</th>
+            </tr>
+          </thead>
+          <tbody id="violations"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
